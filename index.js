@@ -46,6 +46,11 @@ const data = [
 
   const productContainer = document.querySelector(".products")
   const categoryContainer = document.querySelector(".cats")
+  const searchBox = document.querySelector(".search")
+  const priceRange = document.querySelector(".priceRange")
+  const priceValue = document.querySelector(".priceValue")
+
+
 
   const displayProducts = (filteredData) => {
     productContainer.innerHTML = filteredData.map(item => 
@@ -66,7 +71,41 @@ const data = [
         <span class="cat">${cat}</span>
         `
     ).join("")
+
+    categoryContainer.addEventListener("click", (e) => {
+      e.target.textContent === "All" ? displayProducts(data) : displayProducts(data.filter(item => item.cat === e.target.textContent))
+    })
    }
 
   displayProducts(data)
   displayCategories(data)
+
+searchBox.addEventListener("keyup", (e) => {
+  const searchInput = e.target.value.toLowerCase()
+  if(searchInput) {
+    displayProducts(data.filter(item => item.name.toLowerCase().indexOf(searchInput) !== -1))
+  }
+  else {
+    displayProducts(data)
+  }
+})
+
+const setPrice = () => {
+  const priceList = data.map(item => item.price)
+  const minValue = Math.min(...priceList)
+  const maxValue = Math.max(...priceList)
+
+  priceRange.min = minValue
+  priceRange.max = maxValue
+  priceRange.value = maxValue
+  priceValue.textContent = "$" + maxValue
+
+  priceRange.addEventListener("input", (e) => {
+    priceValue.textContent = "$" + e.target.value
+    displayProducts(data.filter(item => item.price <= e.target.value))
+  })
+}
+
+setPrice()
+
+
